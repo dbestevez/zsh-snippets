@@ -19,17 +19,17 @@ case $state in
   snippets)
     case $line[1] in
       add|delete)
-		SNIPPET_FILE=~/.zsh_snippets
-		local snippets;
-		typeset -A zshSnippetArr
+        SNIPPET_FILE=~/.zsh_snippets
+        local snippets;
+        typeset -A zshSnippetArr
 
-		local snippetsFile; snippetsFile=$(_show_zsh_snippets_file)
-		source $snippetsFile
-		for k in "${(@k)zshSnippetArr}"; do
-			snippets+=("$k:$zshSnippetArr[$k]")
-		done
+        local snippetsFile; snippetsFile=$(_show_zsh_snippets_file)
+        source $snippetsFile
+        for k in "${(@k)zshSnippetArr}"; do
+            snippets+=("$k:$zshSnippetArr[$k]")
+        done
 
-		_describe -t snippets 'snippet' snippets && ret=0
+        _describe -t snippets 'snippet' snippets && ret=0
         ;;
     esac
     ;;
