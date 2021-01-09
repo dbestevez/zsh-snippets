@@ -55,7 +55,7 @@ _delete_zsh_snippets() {
     fi
 
     source $SNIPPET_FILE
-    unset zshSnippetArr[$1]
+    unset "zshSnippetArr[$1]"
     typeset -p zshSnippetArr > $SNIPPET_FILE
 }
 
