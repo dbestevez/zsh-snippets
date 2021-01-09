@@ -1,38 +1,45 @@
 #compdef zsh_snippets
-#autoload
 
-local curcontext="$curcontext" state line ret=1
-local -a _configs
+_zsh_snippets() {
+    local curcontext="$curcontext" state line
 
-_arguments -C \
-  '1: :->cmds' \
-  '2:: :->snippets ' && ret=0
+    _arguments -C \
+        "1: :->action" \
+        "2: :->shortcut"
 
-case $state in
-  cmds)
-    _values "zsh-snippets command" \
-        "add[create (or update) the snippet]" \
-        "delete[delete the snippet if exists]" \
-        "list[list all existing snippets]"
-    ret=0
-    ;;
-  snippets)
-    case $line[1] in
-      add|delete)
-        SNIPPET_FILE=~/.zsh_snippets
-        local snippets;
-        typeset -A zshSnippetArr
+    case $state in
+        action)
+            local -a actions=(
+                "add:Create (or update) a snippet"
+                "delete:Delete a snippet"
+                "expand:Expand a snippet"
+                "list:List snippets"
+                "mode:Change jump mode"
+                "help:Show the command help"
+            )
 
-        local snippetsFile; snippetsFile=$(_show_zsh_snippets_file)
-        source $snippetsFile
-        for k in "${(@k)zshSnippetArr}"; do
-            snippets+=("$k:$zshSnippetArr[$k]")
-        done
+            _describe 'action' actions
+            ;;
+        shortcut)
+            case $line[1] in
+                add|delete|expand)
+                    _zsh_snippets_init
 
-        _describe -t snippets 'snippet' snippets && ret=0
-        ;;
+                    local -a snippets
+
+                    for k in "${(@k)zshSnippets}"; do
+                        snippets+=("$k:$zshSnippets[$k]")
+                    done
+
+                    _describe "shortcut" snippets
+                    ;;
+                mode)
+                    local -a modes=(
+                        "backward:Jump between placeholders from back of string"
+                        "forward:Jump between placeholders from front of string"
+                    )
+                    _describe "mode" modes
+            esac
+            ;;
     esac
-    ;;
-esac
-
-return ret
+}
