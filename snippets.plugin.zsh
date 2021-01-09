@@ -21,13 +21,28 @@ _zsh_snippets_add_snippet() {
 #
 # @param $1 The jump mode.
 # ---
-_zsh_snippets_change_mode() {
+_zsh_snippets_change_jump_mode() {
     if [[ "$1" != "forward" ]] && [[ "$1" != "backward" ]]; then
         _zsh_snippets_help "Invalid jump mode (modes: forward/backward)"
         return 1
     fi
 
     jumpMode="$1"
+    _zsh_snippets_save
+}
+
+# ---
+# Changes the jump mode to the provided mode.
+#
+# @param $1 The jump mode.
+# ---
+_zsh_snippets_change_persistency() {
+    if [ $1 != true ] && [ $1 != false ]; then
+        _zsh_snippets_help "Invalid value (values: true/false)"
+        return 1
+    fi
+
+    persistency=$1
     _zsh_snippets_save
 }
 
@@ -115,8 +130,9 @@ _zsh_snippets_init() {
         $(which touch) $SNIPPET_FILE
         $(which chmod) +x $SNIPPET_FILE
 
+        persistency=true
+        jumpMode="forward"
         typeset -g -A snippets
-        typeset -p snippets > $SNIPPET_FILE
         _zsh_snippets_save
     fi
 
@@ -148,7 +164,10 @@ _zsh_snippets_jump() {
 # Saves the zsh_snippets file.
 # ---
 _zsh_snippets_save() {
-    echo "jumpMode=$jumpMode" > $SNIPPET_FILE
+    echo "persistency=$persistency" > $SNIPPET_FILE
+    echo "jumpMode=\"$jumpMode\"" >> $SNIPPET_FILE
+
+    [ $persistency = false ] && return 0
     typeset -p snippets >> $SNIPPET_FILE
 }
 
@@ -199,7 +218,10 @@ zsh_snippets() {
             _zsh_snippets_get_snippets $shortcut
             ;;
         mode)
-            _zsh_snippets_change_mode $shortcut
+            _zsh_snippets_change_jump_mode $shortcut
+            ;;
+        persistency)
+            _zsh_snippets_change_persistency $shortcut
             ;;
         *)
             _zsh_snippets_help "Unrecognized action $action"

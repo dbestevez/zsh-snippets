@@ -15,6 +15,7 @@ _zsh_snippets() {
                 "expand:Expand a snippet"
                 "list:List snippets"
                 "mode:Change jump mode"
+                "persistency:Change persistency mode"
                 "help:Show the command help"
             )
 
@@ -33,12 +34,21 @@ _zsh_snippets() {
 
                     _describe "shortcut" snippets
                     ;;
+
                 mode)
                     local -a modes=(
                         "backward:Jump between placeholders from back of string"
                         "forward:Jump between placeholders from front of string"
                     )
                     _describe "mode" modes
+                    ;;
+
+                persistency)
+                    local -a persistency=(
+                        "true:Save snippets to file and share them between sessions"
+                        "false:Do not save snippets to file"
+                    )
+                    _describe "persistency" persistency
             esac
             ;;
     esac
